@@ -25,10 +25,10 @@ private import gtk.ScrolledWindow;
 private import gtk.Widget;
 private import gtk.Button;
 private import gtk.Tooltip;
+private import gtk.Grid;
 
 private import gdk.RGBA;
 private import gdk.Cursor;
-
 private import gdk.Event;
 
 debug import std.stdio;
@@ -41,17 +41,17 @@ class TestStock : ScrolledWindow
 
 	this()
 	{
-		super(null, null);
+		super();
 		debug(1)
 		{
 			writeln("instantiating TestStock");
 		}
 
-		Table table = new Table(2,2,false);
+		Grid table = new Grid();
 		int col = 0;
 		int row = 0;
 
-		Color color = new Color(cast(ubyte)0,cast(ubyte)255,cast(ubyte)255);
+		RGBA color = new RGBA(cast(ubyte)0,cast(ubyte)255,cast(ubyte)255);
 
 		IconSize size = Button.getIconSize();
 		Button.setIconSize(IconSize.DIALOG);
