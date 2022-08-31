@@ -23,8 +23,6 @@ module TestIdle;
 private import cairo.Context;
 private import cairo.ImageSurface;
 
-private import gtk.VBox;
-private import gtk.HBox;
 private import gtk.Box;
 
 private import gtk.DrawingArea;
@@ -33,8 +31,7 @@ private import gtk.Widget;
 private import gtk.ComboBox;
 private import gtk.ComboBoxText;
 
-private import gdk.Color;
-private import gdk.Cairo;
+private import gdk.RGBA;
 
 private import gtk.SpinButton;
 private import gtk.Adjustment;
@@ -48,20 +45,20 @@ private import glib.Timeout;
 /**
  * This tests the gtkD drawing area widget
  */
-class TestIdle : VBox
+class TestIdle : Box
 {
 
 	SpinButton timeoutSpin;
 
 	this()
 	{
-
+		setVexpand(true);
 		debug(1)
 		{
 			writeln("instantiating TestTimeout");
 		}
 
-		super(false,7);
+		super(GtkOrientation.VERTICAL, 7);
 
 		TestDrawing drawingArea = new TestDrawing();
 
@@ -106,14 +103,14 @@ class TestIdle : VBox
 
 		timeoutSpin = new SpinButton(new Adjustment(200.0, 1.0, 1000.0, 1.0, 100.0, 0),1,0);
 		timeoutSpin.addOnValueChanged(&drawingArea.onTimeoutSpinValueChanged);
-		Box controlBox = new HBox(false, 7);
+		Box controlBox = new Box(GtkOrientation.HORIZONTAL, 7);
 
-		controlBox.packStart(operators, false, false, 2);
-		controlBox.packStart(callType, false, false, 2);
-		controlBox.packStart(timeoutSpin, false, false, 2);
+		// controlBox.packStart(operators, false, false, 2);
+		// controlBox.packStart(callType, false, false, 2);
+		// controlBox.packStart(timeoutSpin, false, false, 2);
 
-		packStart(drawingArea,true,true,0);
-		packStart(controlBox,false,false,0);
+		// packStart(drawingArea,true,true,0);
+		// packStart(controlBox,false,false,0);
 	}
 
 	class TestDrawing : DrawingArea
@@ -143,8 +140,8 @@ class TestIdle : VBox
 
 			addOnMap(&onMap);
 			addOnUnmap(&onUnmap);
-			addOnSizeAllocate(&onSizeAllocate);
-			addOnDraw(&onDraw);
+			// addOnSizeAllocate(&onSizeAllocate);
+			// addOnDraw(&onDraw);
 		}
 
 		public void onMap(Widget widget)
@@ -245,10 +242,10 @@ class TestIdle : VBox
 			return continueIdleCallback;
 		}
 
-		void onCallTypeChanged(ComboBoxText comboBoxText)
+		void onCallTypeChanged(ComboBox comboBox)
 		{
-			debug(trace) writefln("gcOptions = %s", comboBoxText.getActiveText());
-			switch ( comboBoxText.getActiveText() )
+			debug(trace) writefln("gcOptions = %s", comboBoxText.getActiveId());
+			switch ( comboBox.getActiveId() )
 			{
 				case "Idle":    callType = CallType.Idle;    break;
 				case "Timeout": callType = CallType.Timeout; break;
@@ -256,11 +253,11 @@ class TestIdle : VBox
 			}
 			resetCallType();
 		}
-
-		void onOperatorChanged(ComboBoxText comboBoxText)
+		// GTK3: void onOperatorChanged(ComboBoxText comboBoxText, GConnectFlags connectFlags = cast(GConnectFlags)0)
+		void onOperatorChanged(ComboBox comboBox)
 		{
-			debug(trace) writefln("CairoOperator = %s", comboBoxText.getActiveText());
-			switch ( comboBoxText.getActiveText() )
+			debug(trace) writefln("CairoOperator = %s", comboBox.getActiveId());
+			switch ( comboBox.getActiveId() )
 			{
 				case "CLEAR":          operator = CairoOperator.CLEAR;          break;
 				case "SOURCE":         operator = CairoOperator.SOURCE;         break;

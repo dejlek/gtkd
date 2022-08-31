@@ -23,7 +23,7 @@ module TestDrawingArea;
 private import cairo.Context;
 private import cairo.ImageSurface;
 
-private import gtk.VBox;
+private import gtk.Box;
 private import pango.PgContext;
 private import pango.PgLayout;
 
@@ -31,16 +31,12 @@ private import std.stdio;
 private import std.math;
 
 private import gtk.Widget;
-private import gtk.MenuItem;
 private import gtk.ComboBox;
 private import gtk.ComboBoxText;
-private import gtk.Menu;
 private import gtk.Adjustment;
-private import gtk.HBox;
-private import gdk.Pixbuf;
-private import gdk.Cairo;
-private import gdk.Color;
+private import gdk.RGBA;
 private import gdk.Event;
+private import gdk.Texture;
 
 private import pango.PgCairo;
 private import pango.PgFontDescription;
@@ -49,16 +45,21 @@ private import gtk.DrawingArea;
 private import gtk.Image;
 private import gtk.SpinButton;
 
+struct GdkPoint {
+	int x;
+	int y;
+}
 
 /**
  * This tests the gtkD drawing area widget
  */
-class TestDrawingArea : VBox
+class TestDrawingArea : Box
 {
 
 	this()
 	{
-		super(false,4);
+		super(GtkOrientation.VERTICAL, 4);
+		setVexpand(true);
 
 		TestDrawing drawingArea = new TestDrawing();
 
@@ -124,8 +125,8 @@ class TestDrawingArea : VBox
 	{
 		CairoOperator operator = CairoOperator.OVER;
 		ImageSurface surface;
-		Color paintColor;
-		Color black;
+		RGBA paintColor;
+		RGBA black;
 
 		int width;
 		int height;
@@ -135,7 +136,7 @@ class TestDrawingArea : VBox
 		string primitiveType;
 		PgFontDescription font;
 		Image image;
-		Pixbuf scaledPixbuf;
+		Texture scaledPixbuf;
 
 		SpinButton spin;
 		SpinButton backSpin;

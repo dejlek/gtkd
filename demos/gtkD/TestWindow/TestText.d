@@ -37,16 +37,13 @@ class TestText : Box
 
 	this()
 	{
-		this.vexpand = true;
-		super(false,0);
+		this.setVexpand(true);
+		super(GtkOrientation.VERTICAL, 0);
 
 		debug(1)
 		{
 			writeln("instantiating TestText");
 		}
-
-		ScrolledWindow sw = new ScrolledWindow(null, null);
-		sw.setPolicy(PolicyType.AUTOMATIC,PolicyType.AUTOMATIC);
 
 		TextView textView = new TextView();
 		TextBuffer textBuffer = textView.getBuffer();
@@ -70,10 +67,8 @@ GtkD should be simple and straightforward to use.
 D can interface with C so any graphics toolkit with a C API can be used directly from D, this include GTK+."
 
 		);
-
-		sw.add(textView);
-		packStart(sw,true,true,0);
-
+		// GTK3: ScrolledWindow sw = new ScrolledWindow(null, null);
+		ScrolledWindow sw = new ScrolledWindow(textView);
+		sw.setPolicy(PolicyType.AUTOMATIC,PolicyType.AUTOMATIC);
 	}
-
 }

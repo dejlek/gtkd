@@ -23,11 +23,10 @@ import std.traits;
 private import gtk.ScrolledWindow;
 
 private import gtk.Widget;
-private import gtk.Table;
 private import gtk.Button;
 private import gtk.Tooltip;
 
-private import gdk.Color;
+private import gdk.RGBA;
 private import gdk.Cursor;
 
 private import gdk.Event;
