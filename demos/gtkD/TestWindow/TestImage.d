@@ -20,7 +20,7 @@ module TestImage;
 
 //debug = trace
 
-private import gtk.VBox;
+private import gtk.Box;
 
 private import gtk.Table;
 private import gtk.FileChooserDialog;
@@ -40,7 +40,7 @@ private import glib.Str;
 /**
  * This tests the GtkD loading and display and image file
  */
-class TestImage : VBox
+class TestImage : Box
 {
 	Table table;
 	FileChooserDialog fs;
@@ -51,6 +51,7 @@ class TestImage : VBox
 	this(Window window)
 	{
 		this.window = window;
+		this.vexpand = true;
 		debug(1)
 		{
 			writeln("instantiating TestImage");

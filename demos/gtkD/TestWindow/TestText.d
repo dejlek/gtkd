@@ -18,7 +18,7 @@
 
 module TestText;
 
-private import gtk.VBox;
+private import gtk.Box;
 
 private import gtk.ScrolledWindow;
 private import gtk.TextView;
@@ -30,14 +30,14 @@ debug import std.stdio;
  * This tests the GtkD text widget
  */
 
-class TestText : VBox
+class TestText : Box
 {
 
 	private import gtk.ScrolledWindow;
 
 	this()
 	{
-
+		this.vexpand = true;
 		super(false,0);
 
 		debug(1)
