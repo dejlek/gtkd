@@ -22,13 +22,12 @@ module TestImage;
 
 private import gtk.Box;
 
-private import gtk.Table;
+private import gtk.Grid;
+private import gtk.Dialog;
 private import gtk.FileChooserDialog;
 private import gtk.Button;
 private import gtk.Widget;
 private import gtk.ScrolledWindow;
-private import gtk.ButtonBox;
-private import gtk.HButtonBox;
 private import gtk.Image;
 
 private import gtk.Window;
@@ -42,7 +41,7 @@ private import glib.Str;
  */
 class TestImage : Box
 {
-	Table table;
+	Grid table;
 	FileChooserDialog fs;
 	ScrolledWindow sw;
 
@@ -51,28 +50,31 @@ class TestImage : Box
 	this(Window window)
 	{
 		this.window = window;
-		this.vexpand = true;
+		this.setVexpand(true);
 		debug(1)
 		{
 			writeln("instantiating TestImage");
 		}
 
-		super(false,8);
+		super(GtkOrientation.VERTICAL, 8);
 
-		sw = new ScrolledWindow(null,null);
+		sw = new ScrolledWindow(initTable());
 
-		sw.addWithViewport(initTable());
+		//GTK3: Box hBox = HButtonBox.createActionBox();
+		Box hBox = new Box(GtkOrientation.HORIZONTAL, 8);
+		hBox.setHexpand(true);
 
-		ButtonBox hBox = HButtonBox.createActionBox();
-		Button loadDir = new Button("Load Files", &loadImages);
-		hBox.packStart(loadDir,false,false,0);
+		//GTK3: Button loadDir = new Button("Load Files", &loadImages);
+		Button loadDir = new Button("Load Files");
+		loadDir.addOnActivate(&loadImages);
 
-		packStart(sw,true,true,0);
-		packStart(hBox,false,false,0);
-
+    // GTK3:
+		// hBox.packStart(loadDir,false,false,0);
+		// packStart(sw,true,true,0);
+		// packStart(hBox,false,false,0);
 	}
 
-	Table initTable()
+	Grid initTable()
 	{
 
 		string[] pngs;
@@ -90,16 +92,20 @@ class TestImage : Box
 		return loadTable(pngs);
 	}
 
-	private Table loadTable(string[] imageFiles)
+	private Grid loadTable(string[] imageFiles)
 	{
 		//Table table = new Table(1,1,false);
 		if ( table  is  null )
 		{
-			table = new Table(1,1,false);
+			// table = new Table(1,1,false);
+			table = new Grid();
+			table.insertRow(1);
+			table.insertColumn(1);
 		}
 		else
 		{
-			table.removeAll();
+			// FIXME: table.removeAll();
+			debug writeln("table.removeAll()");
 		}
 
 
@@ -127,8 +133,13 @@ class TestImage : Box
 			//image.addOnEnterNotify(&onEnter);
 			//image.addOnLeaveNotify(&onLeave);
 			debug(trace) writefln("adding image %s to table at %s,%s", fileName, col, row);
-			table.resize(col+1, row+1);
-			table.attach(image,col,col+1,row,row+1,AttachOptions.FILL,AttachOptions.FILL,4,4);
+			
+			// GTK3: table.resize(col+1, row+1);
+			table.insertRow(row+1);
+			table.insertColumn(col+1);
+
+			// GTK3: table.attach(image,col,col+1,row,row+1,AttachOptions.FILL,AttachOptions.FILL,4,4);
+			table.attach(image, col, row, image.getWidth, image.getHeight);
 			++col;
 			if ( col == 8 )
 			{
@@ -155,23 +166,26 @@ private import glib.ListSG;
 			fs = new FileChooserDialog("File Selection", window, FileChooserAction.OPEN, a, r);
 		}
 		fs.setSelectMultiple(true);
-		ResponseType response = cast(ResponseType) fs.run();
-		if ( response == ResponseType.ACCEPT )
-		{
-			string[] fileNames;
-			ListSG list = fs.getFilenames();
 
-
-			for ( int i = 0; i<list.length() ; i++)
+		// ResponseType response = cast(ResponseType) fs.run();
+		fs.addOnResponse((int responseId, Dialog fs) {
+			if (responseId == ResponseType.ACCEPT)
 			{
-				debug(trace) writefln("Testmage.loadImages.File selected = %s",
-						Str.toString(cast(char*)list.nthData(i)));
-				fileNames ~= Str.toString(cast(char*)list.nthData(i));
-			}
+				string[] fileNames;
+				auto list = (cast(FileChooserDialog)fs).getFiles();
+				
 
-			loadTable(fileNames);
-		}
-		fs.hide();
+				for ( int i = 0; i<list.getNItems ; i++)
+				{
+					debug(trace) writefln("Testmage.loadImages.File selected = %s",
+							Str.toString(cast(char*)list.getItem(i)));
+					fileNames ~= Str.toString(cast(char*)list.getItem(i));
+				}
+
+				loadTable(fileNames);
+			}
+		});
+		fs.show();
 	}
 
 	void onEnter(Widget widget)
